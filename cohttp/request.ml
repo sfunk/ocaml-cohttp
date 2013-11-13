@@ -15,6 +15,8 @@
  *
  *)
 
+
+
 type t = { 
   headers: Header.t;
   meth: Code.meth;
@@ -116,7 +118,9 @@ module Make(IO : IO.S) = struct
 
   let pieces_sep = Re_str.regexp_string " "
   let parse_request_fst_line ic =
-    let open Code in
+    Pa_event.event_start "parse_request_fst_line";
+    let _res = begin 
+      let open Code in
     read_line ic >>= function
     |Some request_line -> begin
       match Re_str.split_delim pieces_sep request_line with
@@ -128,9 +132,14 @@ module Make(IO : IO.S) = struct
       | _ -> return None
     end
     |None -> return None
+    end in 
+    Pa_event.event_start "parse_request_fst_line";
+    _res
 
   let read ic =
-    parse_request_fst_line ic >>= function
+    Pa_event.event_start "read header";
+    let _res = begin 
+      parse_request_fst_line ic >>= function
     |None -> return None
     |Some (meth, path, version) ->
       Header_IO.parse ic >>= fun headers ->
@@ -141,6 +150,10 @@ module Make(IO : IO.S) = struct
           Uri.of_string ("http://" ^ h ^ path) in
       let encoding = Header.get_transfer_encoding headers in
       return (Some { headers; meth; uri; version; encoding })
+    end
+    in
+   upon _res (fun _ -> Pa_event.event_end "read header");
+    _res
 
   let has_body req = Transfer.has_body req.encoding
   let read_body_chunk req ic = Transfer_IO.read req.encoding ic

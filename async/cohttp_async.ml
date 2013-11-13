@@ -17,6 +17,7 @@
 
 open Core.Std
 open Async.Std
+open Pa_event
 
 module IO = struct
   let check_debug norm_fn debug_fn =
@@ -31,6 +32,7 @@ module IO = struct
   let (>>=) = Deferred.(>>=)
   let (>>) m n = m >>= fun _ -> n
   let return = Deferred.return
+  let upon = Deferred.upon
 
   type ic = Reader.t
   type oc = Writer.t
@@ -110,7 +112,9 @@ module Response = struct
 end
 
 let pipe_of_body read_chunk ic oc =
-  let rd,wr = Pipe.create () in
+  Pa_event.event_start "pipe_of_body";
+  let _res = begin
+    let rd,wr = Pipe.create () in
   let rec aux () =
     let open Cohttp.Transfer in
     read_chunk ic
@@ -141,8 +145,10 @@ let pipe_of_body read_chunk ic oc =
         Writer.close oc
         >>= fun () ->
         Reader.close ic
-  in don't_wait_for (aux ());
+  in upon (aux ()) (fun _ -> Pa_event.event_end "pipe_of_body");
   rd
+  end in
+  _res
 
 type body = string Pipe.Reader.t
 let body_to_string body =
@@ -221,6 +227,8 @@ module Server = struct
   (* Turn an incoming TCP request into an HTTP request and
      dispatch it to [handle_request] *)
   let handle_client handle_request sock rd wr =
+    Pa_event.event_start "Total";
+    let _res = begin
     Request.read rd
     >>= fun req ->
     Option.value_exn ~message:"Error reading HTTP request" req
@@ -237,9 +245,16 @@ module Server = struct
     handle_request ~body sock req
     >>= fun response ->
     response wr
+    end 
+    in
+    upon _res (fun _ -> Pa_event.event_end "Total");
+    _res
+
 
   let respond ?headers ~body status : response =
     fun wr ->
+      Pa_event.event_start "respond";
+      let _res = begin 
       let headers = Cohttp.Header.add_opt headers "connection" "close" in
       match body with
       | None ->
@@ -258,13 +273,22 @@ module Server = struct
         Response.write_footer res wr
         >>= fun () ->
         Writer.close wr
+      end in
+      upon _res (fun _ -> Pa_event.event_end "respond");
+      _res
 
   let respond_with_pipe ?headers ?(code=`OK) body =
     return (respond ?headers ~body:(Some body) code)
 
   let respond_with_string ?headers ?(code=`OK) body =
-    let body = Pipe.of_list [body] in
-    return (respond ?headers ~body:(Some body) code)
+(*    Pa_event.event_start "respond_with_string"; *)
+    let _res = begin
+      let body = Pipe.of_list [body] in
+      return (respond ?headers ~body:(Some body) code)
+    end
+    in
+(*    upon _res (fun _ -> Pa_event.event_end "respond_with_string callback"); *)
+    _res
 
   let resolve_local_file ~docroot ~uri =
     (* This normalises the Uri and strips out .. characters *)
@@ -275,26 +299,37 @@ module Server = struct
     "<html><body><h1>404 Not Found</h1></body></html>"
 
   let respond_with_file ?headers ?error_body filename =
-    Monitor.try_with ~run:`Now
-      (fun () ->
-         Reader.open_file filename
-         >>= fun rd ->
-         let body = Reader.pipe rd in
-         return (respond ?headers ~body:(Some body) `OK)
-      )
-    >>= function
-      |Ok res -> return res
-      |Error exn ->
-        let error_body = Option.value ~default:error_body_default error_body in
-        respond_with_string ~code:`Not_found error_body
+(*    Pa_event.event_start "respond_with_file callback"; *)
+    let _res = begin
+      Monitor.try_with ~run:`Now
+	(fun () ->
+          Reader.open_file filename
+          >>= fun rd ->
+          let body = Reader.pipe rd in
+          return (respond ?headers ~body:(Some body) `OK)
+	)
+      >>= function
+	|Ok res -> return res
+	|Error exn ->
+          let error_body = Option.value ~default:error_body_default error_body in
+          respond_with_string ~code:`Not_found error_body
+    end
+    in
+(*    upon _res (fun _ -> Pa_event.event_end "respond_with_file callback"); *)
+    _res
 
 
   let create ?max_connections ?max_pending_connections 
       ?buffer_age_limit ?on_handler_error where_to_listen handle_request =
-    Tcp.Server.create ?max_connections ?max_pending_connections 
-      ?buffer_age_limit ?on_handler_error 
-      where_to_listen (handle_client handle_request)
-    >>| fun server ->
-    { server }
-
+(*    Pa_event.event_start "Create server callback"; *)
+    let _res = begin
+      Tcp.Server.create ?max_connections ?max_pending_connections 
+	?buffer_age_limit ?on_handler_error 
+	where_to_listen (handle_client handle_request)
+      >>| fun server ->
+      { server }
+    end
+    in
+(*    upon _res (fun _ -> Pa_event.event_end "Create server callback"); *)
+    _res
 end

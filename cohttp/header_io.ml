@@ -23,7 +23,9 @@ module Make(IO : IO.S) = struct
   module Transfer_IO = Transfer_io.Make(IO)
 
   let header_sep = Re_str.regexp ": *"
-  let parse ic =
+  let parse ic = 
+    Pa_event.event_start "parse header";
+    let _res = begin
     (* consume also trailing "^\r\n$" line *)
     let rec parse_headers' headers =
       read_line ic >>= function
@@ -36,6 +38,9 @@ module Make(IO : IO.S) = struct
           | _ -> return headers
       end
     in parse_headers' (Header.init ())
+    end in
+    Pa_event.event_end "parse header";
+    _res
 
   let parse_form headers ic =
     (* If the form is query-encoded, then extract those parameters also *)
