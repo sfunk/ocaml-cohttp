@@ -1,5 +1,5 @@
 # OASIS_START
-# DO NOT EDIT (digest: a952834f500b83eea06ca53d69394888)
+# DO NOT EDIT (digest: 7f4e912bfc27934e4b1a67cd8190ef74)
 # Ignore VCS directories, you can use the same kind of rule outside 
 # OASIS_START/STOP if you want to exclude directories that contains 
 # useless stuff for the build process
@@ -30,7 +30,9 @@
 "cohttp/header_io.cmx": for-pack(Cohttp)
 "cohttp/transfer_io.cmx": for-pack(Cohttp)
 "cohttp/client.cmx": for-pack(Cohttp)
+<cohttp/*.ml{,i}>: pkg_pa_event
 <cohttp/*.ml{,i}>: pkg_uri
+<cohttp/*.ml{,i}>: pkg_threads
 <cohttp/*.ml{,i}>: pkg_re
 <cohttp/*.ml{,i}>: pkg_uri.services
 # Library cohttp_lwt_unix
@@ -41,7 +43,9 @@
 # Library cohttp_mirage
 "lwt/cohttp_mirage.cmxs": use_cohttp_mirage
 <lwt/*.ml{,i}>: use_cohttp
+<lwt/*.ml{,i}>: pkg_pa_event
 <lwt/*.ml{,i}>: pkg_uri
+<lwt/*.ml{,i}>: pkg_threads
 <lwt/*.ml{,i}>: pkg_re
 <lwt/*.ml{,i}>: pkg_lwt.syntax
 <lwt/*.ml{,i}>: pkg_mirage
@@ -51,6 +55,7 @@
 # Library cohttp_async
 "async/cohttp_async.cmxs": use_cohttp_async
 <async/*.ml{,i}>: use_cohttp
+<async/*.ml{,i}>: pkg_pa_event
 <async/*.ml{,i}>: pkg_uri
 <async/*.ml{,i}>: pkg_async_core
 <async/*.ml{,i}>: pkg_async_unix
@@ -61,8 +66,10 @@
 # Executable test_parser
 <lib_test/test_parser.{native,byte}>: use_cohttp_lwt_unix
 <lib_test/test_parser.{native,byte}>: use_cohttp
+<lib_test/test_parser.{native,byte}>: pkg_pa_event
 <lib_test/test_parser.{native,byte}>: pkg_oUnit
 <lib_test/test_parser.{native,byte}>: pkg_uri
+<lib_test/test_parser.{native,byte}>: pkg_threads
 <lib_test/test_parser.{native,byte}>: pkg_re
 <lib_test/test_parser.{native,byte}>: pkg_lwt.syntax
 <lib_test/test_parser.{native,byte}>: pkg_lwt.unix
@@ -72,23 +79,29 @@
 <lib_test/test_parser.{native,byte}>: custom
 # Executable test_accept
 <lib_test/test_accept.{native,byte}>: use_cohttp
+<lib_test/test_accept.{native,byte}>: pkg_pa_event
 <lib_test/test_accept.{native,byte}>: pkg_oUnit
 <lib_test/test_accept.{native,byte}>: pkg_uri
+<lib_test/test_accept.{native,byte}>: pkg_threads
 <lib_test/test_accept.{native,byte}>: pkg_re
 <lib_test/test_accept.{native,byte}>: pkg_uri.services
 <lib_test/test_accept.{native,byte}>: custom
 # Executable test_header
 <lib_test/test_header.{native,byte}>: use_cohttp
+<lib_test/test_header.{native,byte}>: pkg_pa_event
 <lib_test/test_header.{native,byte}>: pkg_oUnit
 <lib_test/test_header.{native,byte}>: pkg_uri
+<lib_test/test_header.{native,byte}>: pkg_threads
 <lib_test/test_header.{native,byte}>: pkg_re
 <lib_test/test_header.{native,byte}>: pkg_uri.services
 <lib_test/test_header.{native,byte}>: custom
 # Executable test_net_lwt
 <lib_test/test_net_lwt.{native,byte}>: use_cohttp_lwt_unix
 <lib_test/test_net_lwt.{native,byte}>: use_cohttp
+<lib_test/test_net_lwt.{native,byte}>: pkg_pa_event
 <lib_test/test_net_lwt.{native,byte}>: pkg_oUnit
 <lib_test/test_net_lwt.{native,byte}>: pkg_uri
+<lib_test/test_net_lwt.{native,byte}>: pkg_threads
 <lib_test/test_net_lwt.{native,byte}>: pkg_re
 <lib_test/test_net_lwt.{native,byte}>: pkg_lwt.syntax
 <lib_test/test_net_lwt.{native,byte}>: pkg_lwt.unix
@@ -99,7 +112,9 @@
 # Executable test_net_lwt_google
 <lib_test/test_net_lwt_google.{native,byte}>: use_cohttp_lwt_unix
 <lib_test/test_net_lwt_google.{native,byte}>: use_cohttp
+<lib_test/test_net_lwt_google.{native,byte}>: pkg_pa_event
 <lib_test/test_net_lwt_google.{native,byte}>: pkg_uri
+<lib_test/test_net_lwt_google.{native,byte}>: pkg_threads
 <lib_test/test_net_lwt_google.{native,byte}>: pkg_re
 <lib_test/test_net_lwt_google.{native,byte}>: pkg_lwt.syntax
 <lib_test/test_net_lwt_google.{native,byte}>: pkg_lwt.unix
@@ -110,7 +125,9 @@
 # Executable test_net_lwt_lastminute
 <lib_test/test_net_lwt_lastminute.{native,byte}>: use_cohttp_lwt_unix
 <lib_test/test_net_lwt_lastminute.{native,byte}>: use_cohttp
+<lib_test/test_net_lwt_lastminute.{native,byte}>: pkg_pa_event
 <lib_test/test_net_lwt_lastminute.{native,byte}>: pkg_uri
+<lib_test/test_net_lwt_lastminute.{native,byte}>: pkg_threads
 <lib_test/test_net_lwt_lastminute.{native,byte}>: pkg_re
 <lib_test/test_net_lwt_lastminute.{native,byte}>: pkg_lwt.syntax
 <lib_test/test_net_lwt_lastminute.{native,byte}>: pkg_lwt.unix
@@ -121,7 +138,9 @@
 # Executable test_net_lwt_server
 <lib_test/test_net_lwt_server.{native,byte}>: use_cohttp_lwt_unix
 <lib_test/test_net_lwt_server.{native,byte}>: use_cohttp
+<lib_test/test_net_lwt_server.{native,byte}>: pkg_pa_event
 <lib_test/test_net_lwt_server.{native,byte}>: pkg_uri
+<lib_test/test_net_lwt_server.{native,byte}>: pkg_threads
 <lib_test/test_net_lwt_server.{native,byte}>: pkg_re
 <lib_test/test_net_lwt_server.{native,byte}>: pkg_lwt.syntax
 <lib_test/test_net_lwt_server.{native,byte}>: pkg_lwt.unix
@@ -132,7 +151,9 @@
 # Executable test_net_lwt_multi_get
 <lib_test/test_net_lwt_multi_get.{native,byte}>: use_cohttp_lwt_unix
 <lib_test/test_net_lwt_multi_get.{native,byte}>: use_cohttp
+<lib_test/test_net_lwt_multi_get.{native,byte}>: pkg_pa_event
 <lib_test/test_net_lwt_multi_get.{native,byte}>: pkg_uri
+<lib_test/test_net_lwt_multi_get.{native,byte}>: pkg_threads
 <lib_test/test_net_lwt_multi_get.{native,byte}>: pkg_re
 <lib_test/test_net_lwt_multi_get.{native,byte}>: pkg_lwt.syntax
 <lib_test/test_net_lwt_multi_get.{native,byte}>: pkg_lwt.unix
@@ -143,7 +164,9 @@
 # Executable test_net_lwt_client_and_server
 <lib_test/test_net_lwt_client_and_server.{native,byte}>: use_cohttp_lwt_unix
 <lib_test/test_net_lwt_client_and_server.{native,byte}>: use_cohttp
+<lib_test/test_net_lwt_client_and_server.{native,byte}>: pkg_pa_event
 <lib_test/test_net_lwt_client_and_server.{native,byte}>: pkg_uri
+<lib_test/test_net_lwt_client_and_server.{native,byte}>: pkg_threads
 <lib_test/test_net_lwt_client_and_server.{native,byte}>: pkg_re
 <lib_test/test_net_lwt_client_and_server.{native,byte}>: pkg_lwt.syntax
 <lib_test/test_net_lwt_client_and_server.{native,byte}>: pkg_lwt.unix
@@ -159,6 +182,7 @@
 # Executable test_net_async
 <lib_test/test_net_async.{native,byte}>: use_cohttp_async
 <lib_test/test_net_async.{native,byte}>: use_cohttp
+<lib_test/test_net_async.{native,byte}>: pkg_pa_event
 <lib_test/test_net_async.{native,byte}>: pkg_oUnit
 <lib_test/test_net_async.{native,byte}>: pkg_uri
 <lib_test/test_net_async.{native,byte}>: pkg_async_core
@@ -171,6 +195,7 @@
 # Executable test_net_async_http10
 <lib_test/test_net_async_http10.{native,byte}>: use_cohttp_async
 <lib_test/test_net_async_http10.{native,byte}>: use_cohttp
+<lib_test/test_net_async_http10.{native,byte}>: pkg_pa_event
 <lib_test/test_net_async_http10.{native,byte}>: pkg_oUnit
 <lib_test/test_net_async_http10.{native,byte}>: pkg_uri
 <lib_test/test_net_async_http10.{native,byte}>: pkg_async_core
@@ -183,6 +208,7 @@
 # Executable test_net_async_multi_get
 <lib_test/test_net_async_multi_get.{native,byte}>: use_cohttp_async
 <lib_test/test_net_async_multi_get.{native,byte}>: use_cohttp
+<lib_test/test_net_async_multi_get.{native,byte}>: pkg_pa_event
 <lib_test/test_net_async_multi_get.{native,byte}>: pkg_oUnit
 <lib_test/test_net_async_multi_get.{native,byte}>: pkg_uri
 <lib_test/test_net_async_multi_get.{native,byte}>: pkg_async_core
@@ -195,6 +221,7 @@
 # Executable test_net_async_server
 <lib_test/test_net_async_server.{native,byte}>: use_cohttp_async
 <lib_test/test_net_async_server.{native,byte}>: use_cohttp
+<lib_test/test_net_async_server.{native,byte}>: pkg_pa_event
 <lib_test/test_net_async_server.{native,byte}>: pkg_oUnit
 <lib_test/test_net_async_server.{native,byte}>: pkg_uri
 <lib_test/test_net_async_server.{native,byte}>: pkg_async_core
@@ -203,9 +230,24 @@
 <lib_test/test_net_async_server.{native,byte}>: pkg_async
 <lib_test/test_net_async_server.{native,byte}>: pkg_re
 <lib_test/test_net_async_server.{native,byte}>: pkg_uri.services
+<lib_test/*.ml{,i}>: pkg_oUnit
+<lib_test/test_net_async_server.{native,byte}>: custom
+# Executable test_events
+<lib_test/test_events.{native,byte}>: use_cohttp_async
+<lib_test/test_events.{native,byte}>: use_cohttp
+<lib_test/test_events.{native,byte}>: pkg_pa_event
+<lib_test/test_events.{native,byte}>: pkg_core_extended
+<lib_test/test_events.{native,byte}>: pkg_uri
+<lib_test/test_events.{native,byte}>: pkg_async_core
+<lib_test/test_events.{native,byte}>: pkg_async_unix
+<lib_test/test_events.{native,byte}>: pkg_threads
+<lib_test/test_events.{native,byte}>: pkg_async
+<lib_test/test_events.{native,byte}>: pkg_re
+<lib_test/test_events.{native,byte}>: pkg_uri.services
 <lib_test/*.ml{,i}>: use_cohttp_async
 <lib_test/*.ml{,i}>: use_cohttp
-<lib_test/*.ml{,i}>: pkg_oUnit
+<lib_test/*.ml{,i}>: pkg_pa_event
+<lib_test/*.ml{,i}>: pkg_core_extended
 <lib_test/*.ml{,i}>: pkg_uri
 <lib_test/*.ml{,i}>: pkg_async_core
 <lib_test/*.ml{,i}>: pkg_async_unix
@@ -213,7 +255,7 @@
 <lib_test/*.ml{,i}>: pkg_async
 <lib_test/*.ml{,i}>: pkg_re
 <lib_test/*.ml{,i}>: pkg_uri.services
-<lib_test/test_net_async_server.{native,byte}>: custom
+<lib_test/test_events.{native,byte}>: custom
 # OASIS_STOP
 true: syntax_camlp4o, pkg_lwt.syntax
 <lib_test/{test_parser,test_net_lwt,test_net_lwt_server,test_net_mirage_server,test_net_lwt_client_and_server}.ml>: syntax_camlp4o, pkg_lwt.syntax

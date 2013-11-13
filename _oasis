@@ -12,7 +12,7 @@ Library cohttp
   Findlibname: cohttp
   Pack: true
   Modules: IO, Code, Header, Cookie, Request, Response, Transfer, Accept, Accept_parser, Accept_lexer, Base64, Auth, Header_io, Transfer_io, Client
-  BuildDepends:	re, uri (>= 1.3.8), uri.services
+  BuildDepends:	re, uri (>= 1.3.8), uri.services, pa_event, threads
 
 Flag lwt
   Description: build the Lwt library
@@ -54,7 +54,7 @@ Library cohttp_async
   Path: async
   Findlibname: async
   FindlibParent: cohttp
-  BuildDepends: uri, cohttp, async_core (>= 109.12.00), async_unix, threads, async
+  BuildDepends: pa_event, uri, cohttp, async_core (>= 109.12.00), async_unix, threads, async
   Modules: Cohttp_async
 
 Document cohttp
@@ -180,7 +180,7 @@ Executable test_net_async
   Custom:             true
   CompiledObject:     best
   Install:            false
-  BuildDepends:       cohttp, cohttp.async, oUnit (>= 1.0.2)
+  BuildDepends:       pa_event, cohttp, cohttp.async, oUnit (>= 1.0.2)
 
 Executable test_net_async_http10
   Path:               lib_test
@@ -208,6 +208,15 @@ Executable test_net_async_server
   CompiledObject:     best
   Install:            false
   BuildDepends:       cohttp, cohttp.async, oUnit (>= 1.0.2)
+
+Executable test_events
+  Path:               lib_test
+  MainIs:             test_events.ml
+  Build$:             flag(tests) && flag(async)
+  Custom:             true
+  CompiledObject:     best
+  Install:            false
+  BuildDepends:       pa_event, cohttp, cohttp.async, core_extended
 
 Test test_accept
   Run$:               flag(tests)
