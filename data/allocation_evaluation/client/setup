@@ -1,0 +1,3 @@
+running test_net_event_alloc
+simple connection to www.google.com, reading response
+one at a time sequentially
