@@ -5,7 +5,7 @@ open Pa_event
 open Async.Std
 open Cohttp_async
 
-let lifetime = 90.
+let lifetime = 30.
 
 let handler ~body sock req =
   Pa_event.event_start "handle_request";
