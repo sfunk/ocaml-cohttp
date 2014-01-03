@@ -1,0 +1,11 @@
+test_net_event:
+
+contact www.apple.com sequentially n many times.
+headers [connection,close]
+no body
+simple GET request
+
+response size: 20655 bytes
+
+normally done in 90-105ms
+
