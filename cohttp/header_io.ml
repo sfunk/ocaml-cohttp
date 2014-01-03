@@ -24,7 +24,6 @@ module Make(IO : IO.S) = struct
 
   let header_sep = Re_str.regexp ": *"
   let parse ic = 
-    Pa_event.event_start "parse header";
     let _res = begin
     (* consume also trailing "^\r\n$" line *)
     let rec parse_headers' headers =
@@ -39,7 +38,6 @@ module Make(IO : IO.S) = struct
       end
     in parse_headers' (Header.init ())
     end in
-    Pa_event.event_end "parse header";
     _res
 
   let parse_form headers ic =
