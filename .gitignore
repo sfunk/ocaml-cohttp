@@ -1,9 +1,13 @@
 *.swp
 _build/
 dist/
+*.*~
+*~
+myocamlbuild.ml
 setup.data
 setup.log
 setup.bin
 *.docdir
 *.native
 *.byte
+*stats_*
