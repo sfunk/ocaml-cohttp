@@ -5,6 +5,13 @@ module type S = sig
   val upon : 'a t -> ('a -> unit) -> unit
   val return : 'a -> 'a t
 
+
+  (* Added for EVENT_ASYNC support *)
+  module Scheduler : sig
+    val with_local : 'a Core.Std.Univ_map.Key.t -> 'a option -> f:(unit -> 'b) -> 'b
+  end
+
+
   type ic
   type oc
 
@@ -15,3 +22,4 @@ module type S = sig
 
   val write : oc -> string -> unit t
 end
+
