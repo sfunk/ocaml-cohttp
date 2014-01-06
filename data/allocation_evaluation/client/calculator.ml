@@ -6,6 +6,18 @@
    For major allocations, want to ignore outliers that result from a major-gc
 
    runtime overhead negligible for this measurement
+
+
+   for measurements for minor and major-gcs:
+   test_net_event without any pa_events has no minor or major-gcs
+   with full 3 fields, 112 invocations,
+   still 0 major-gcs but 3 in 30 minor gcs
+   this shows, it is too much!
+
+   minor_heap_size is 1_000_000 words, so
+   1_000_000 * 64 B = 64 MB
+
+   with 112 invocations, 71487 is ~4MB of minor allocations!
 *)
 
 
