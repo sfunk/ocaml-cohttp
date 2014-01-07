@@ -34,6 +34,8 @@ module IO = struct
   let return = Deferred.return
   let upon = Deferred.upon
 
+  module Scheduler = Async_unix.Scheduler
+
   type ic = Reader.t
   type oc = Writer.t
 
@@ -95,10 +97,12 @@ end
 
 module Net = struct
   let connect ?interrupt uri =
-    let host = Option.value (Uri.host uri) ~default:"localhost" in
+    EVENT_ASYNC "Net.connect"
+    ( let host = Option.value (Uri.host uri) ~default:"localhost" in
     match Uri_services.tcp_port_of_uri ~default:"http" uri with
     |None -> raise (Failure "Net.connect") (* TODO proper exception *)
     |Some port -> Tcp.connect ?interrupt (Tcp.to_host_and_port host port)
+     )   
 end
 
 module Request = struct
@@ -112,13 +116,12 @@ module Response = struct
 end
 
 let pipe_of_body read_chunk ic oc =
-  Pa_event.event_start "pipe_of_body";
-  let _res = begin
-    let rd,wr = Pipe.create () in
+  let rd,wr = Pipe.create () in
   let rec aux () =
     let open Cohttp.Transfer in
     read_chunk ic
-    >>= function
+    >>= fun result ->
+    match result with 
       | Chunk buf ->
         Pipe.write_when_ready wr ~f:(fun wrfn -> wrfn buf)
         >>= (function
@@ -145,10 +148,8 @@ let pipe_of_body read_chunk ic oc =
         Writer.close oc
         >>= fun () ->
         Reader.close ic
-  in upon (aux ()) (fun _ -> Pa_event.event_end "pipe_of_body");
+  in don't_wait_for (aux ());
   rd
-  end in
-  _res
 
 type body = string Pipe.Reader.t
 let body_to_string body =
@@ -227,7 +228,6 @@ module Server = struct
   (* Turn an incoming TCP request into an HTTP request and
      dispatch it to [handle_request] *)
   let handle_client handle_request sock rd wr =
-    Pa_event.event_start "Total";
     let _res = begin
     Request.read rd
     >>= fun req ->
@@ -247,13 +247,11 @@ module Server = struct
     response wr
     end 
     in
-    upon _res (fun _ -> Pa_event.event_end "Total");
     _res
 
 
   let respond ?headers ~body status : response =
     fun wr ->
-      Pa_event.event_start "respond";
       let _res = begin 
       let headers = Cohttp.Header.add_opt headers "connection" "close" in
       match body with
@@ -274,7 +272,6 @@ module Server = struct
         >>= fun () ->
         Writer.close wr
       end in
-      upon _res (fun _ -> Pa_event.event_end "respond");
       _res
 
   let respond_with_pipe ?headers ?(code=`OK) body =
