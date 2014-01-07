@@ -8,7 +8,7 @@ open Cohttp_async
 let lifetime = 30.
 
 let handler ~body sock req =
-  Pa_event.event_start "handle_request";
+(*  Pa_event.event_start "handle_request"; *)
   let _res = begin 
   let uri = Cohttp.Request.uri req in
   match Uri.path uri with
@@ -19,7 +19,7 @@ let handler ~body sock req =
     | _ ->   
       Server.respond_with_string "Test"
   end in 
-  upon _res (fun _ -> Pa_event.event_end "handle_request");
+(*  upon _res (fun _ -> Pa_event.event_end "handle_request"); *)
   _res
 
     
